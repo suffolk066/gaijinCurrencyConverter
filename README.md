@@ -1,1 +1,2 @@
-# gaijinCurrencyConverter
+# 가이진 환율 계산기
+계산해 노예야
