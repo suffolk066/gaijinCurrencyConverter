@@ -73,7 +73,7 @@ sheet = doc.worksheet('시트1')
 # sheet.resize(1, 3) # 시트 1행 3열로 만들기
 
 # 통화 데이터 가져오기
-start_row = 2
+start_row = 1
 for item in select.options:
     get_inner_text = item.get_attribute('innerText') # n번째 통화 얻어오기
     select.select_by_value(get_inner_text) # n번째 통화 선택
@@ -92,7 +92,7 @@ for item in select.options:
     currency_text = item.get_attribute('value') # n번째 통화 영문 3글자 따오기 ex) USD, KRW, JPY...
 
     print(currency_text + ' ' + currency_amount) # 콘솔에 현재 통화 데이터 1줄씩 출력
-    sheet.insert_row([currency_text, currency_amount], start_row) # 구글 시트에 2핻부터 데이터 삽입
+    sheet.insert_row([start_row, currency_text, currency_amount], start_row) # 구글 시트에 1행부터 데이터 삽입
     start_row += 1
 
 print("출력 종료")
