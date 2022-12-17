@@ -1,11 +1,13 @@
 import time
 import random
-import openpyxl
+import gspread
+
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
+from oauth2client.service_account import ServiceAccountCredentials
 
 # 크롬 드라이버 자동 업데이트
 from webdriver_manager.chrome import ChromeDriverManager
@@ -58,30 +60,42 @@ print("결제창 대기")
 driver.switch_to.frame(driver.find_element(By.XPATH, '//*[@id="pay-frame"]'))
 driver.implicitly_wait(3)
 
-
-path = r'F:\workspace\gaijin\data\data.xlsx'
-wb = openpyxl.load_workbook(path)
-ws = wb.active # 현재 활성화 된 시트 선택
-
+# 통화 선택
 select = Select(driver.find_element(By.XPATH, '//*[@id="currency_lbl"]/div/select'))
 
-row = 2
+
+# 구글 시트 연동
+scope = ['https://spreadsheets.google.com/feeds']
+creds = ServiceAccountCredentials.from_json_keyfile_name('key.json', scope)
+client = gspread.authorize(creds)
+doc = client.open_by_url('https://docs.google.com/spreadsheets/d/1R9iHWDpfL9_pXBthJfakCRZ5rF3EyyqYbgaaIWoiXzI/edit#gid=0')
+sheet = doc.worksheet('시트1')
+# sheet.resize(1, 3) # 시트 1행 3열로 만들기
+
+# 통화 데이터 가져오기
+start_row = 2
 for item in select.options:
-    get_value = item.get_attribute('innerText')
-    get_character = item.get_attribute('value')
-    select.select_by_value(get_value)
-    time.sleep(1)
-    get_currency = driver.find_element(By.CSS_SELECTOR, "#orderTotalAmount")
-    currency = get_currency.text # $ 1.00
-    arr = currency.split(maxsplit=1) # 1.00
-    change_currency = arr[1].strip()
-    print(get_character + ' ' + change_currency)
-    ws[f'A{row}'] = str(get_character)
-    ws[f'B{row}'] = str(change_currency)
-    row = row + 1
+    get_inner_text = item.get_attribute('innerText') # n번째 통화 얻어오기
+    select.select_by_value(get_inner_text) # n번째 통화 선택
+    time.sleep(2) # 통화 선택하고 2초동안 대기 
+    # ㄴ 구글 시트 쓰기 요청 분당 60개만 가능하기 때문에 딜레이 길게함
+
+    amount = driver.find_element(By.CSS_SELECTOR, "#orderTotalAmount") # 통화 가격 선택
+    currency_amount = ""
+    if (amount.text.count(' ') == 1):
+        split_amount = amount.text.split(maxsplit=1)
+        currency_amount = split_amount[1]
+    else:
+        split_amount = amount.text.split(maxsplit=2)
+        currency_amount = split_amount[1] + split_amount[2]
+
+    currency_text = item.get_attribute('value') # n번째 통화 영문 3글자 따오기 ex) USD, KRW, JPY...
+
+    print(currency_text + ' ' + currency_amount) # 콘솔에 현재 통화 데이터 1줄씩 출력
+    sheet.insert_row([currency_text, currency_amount], start_row) # 구글 시트에 2핻부터 데이터 삽입
+    start_row += 1
 
 print("출력 종료")
 
 # 종료
-wb.save(path)
 driver.close()
