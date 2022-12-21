@@ -16,6 +16,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 chrome_options = Options()
 user_data = r"C:\Users\zofld\AppData\Local\Google\Chrome\User Data"
 chrome_options.add_argument(f"user-data-dir={user_data}")
+chrome_options.add_argument("headless")
 chrome_options.add_experimental_option("detach", True)
 
 service = Service(executable_path=ChromeDriverManager().install())
@@ -76,7 +77,7 @@ sheet = doc.worksheet('시트1')
 
 
 # 통화 데이터 가져오기
-start_row = 2
+start_row = 3
 for item in select.options:
     get_inner_text = item.get_attribute('innerText') # n번째 통화 얻어오기
     select.select_by_value(get_inner_text) # n번째 통화 선택
