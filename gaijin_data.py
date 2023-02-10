@@ -16,7 +16,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 chrome_options = Options()
 user_data = r"C:\Users\zofld\AppData\Local\Google\Chrome\User Data"
 chrome_options.add_argument(f"user-data-dir={user_data}")
-chrome_options.add_argument("headless")
+#chrome_options.add_argument("headless")
 chrome_options.add_experimental_option("detach", True)
 
 service = Service(executable_path=ChromeDriverManager().install())
@@ -69,8 +69,8 @@ select = Select(driver.find_element(By.XPATH, '//*[@id="currency_lbl"]/div/selec
 scope = ['https://spreadsheets.google.com/feeds']
 creds = ServiceAccountCredentials.from_json_keyfile_name('key.json', scope)
 client = gspread.authorize(creds)
-doc = client.open_by_url('https://docs.google.com/spreadsheets/d/1R9iHWDpfL9_pXBthJfakCRZ5rF3EyyqYbgaaIWoiXzI/edit#gid=0')
-sheet = doc.worksheet('시트1')
+doc = client.open_by_url('https://docs.google.com/spreadsheets/d/1tt3aCgkLYgsQ04G3ewMi1zKCArFILUUJu0svQOtqm9w/edit#gid=0')
+sheet = doc.worksheet('구글')
 # sheet.resize(1, 3) # 시트 1행 3열로 만들기
 
 

@@ -50,12 +50,15 @@ def check_currency():
     for i in range(len(list)): 
         list = get_list() # ???????????????
         i += 1
+        #print('i : ', i)
+        #print('리스트 : ', len(list))
+        if(i == len(list)):
+            return
         currency_from = shadow_root.find_element(By.CSS_SELECTOR, '#autosuggestinput_from')
         currency_from.click()
         list[i].click()
         convert()
-        if(i == len(list)):
-            return
+
 
 def convert():
     # 변환 버튼 클릭
@@ -77,8 +80,8 @@ def insertSheet():
     scope = ['https://spreadsheets.google.com/feeds']
     creds = ServiceAccountCredentials.from_json_keyfile_name('key.json', scope)
     client = gspread.authorize(creds)
-    doc = client.open_by_url('https://docs.google.com/spreadsheets/d/1R9iHWDpfL9_pXBthJfakCRZ5rF3EyyqYbgaaIWoiXzI/edit#gid=0')
-    sheet = doc.worksheet('시트3')
+    doc = client.open_by_url('https://docs.google.com/spreadsheets/d/1tt3aCgkLYgsQ04G3ewMi1zKCArFILUUJu0svQOtqm9w/edit#gid=0')
+    sheet = doc.worksheet('비자')
     global startRow
     print(send_currency)
     sheet.update_cell(startRow, 2, send_currency)
@@ -92,25 +95,3 @@ print("통화 체크")
 check_currency()
 print("입력 종료")
 driver.close()
-
-# # 에러 체크
-# def checkElement():
-#     try:
-#         print("체크중")
-#         shadow_root.find_element(By.CSS_SELECTOR, 'form > div > div > div:nth-child(1) > div.vs-row.vs-justify-content-center > div > div > div > div > p > span')
-#     except NoSuchElementException:
-#         return False
-
-# if (checkElement() == True):
-#     print("에러 발생")
-#     btn_modify = shadow_root.find_element(By.CSS_SELECTOR, 'form > div > div > div.vs-consolidated-section > div > div > div:nth-child(2) > button')
-#     btn_modify.click()
-#     input_date = shadow_root.find_element(By.CSS_SELECTOR, '#dateinput_date')
-#     input_date.click()
-#     for i in range(10): 
-#         input_date.send_keys(Keys.BACK_SPACE)
-#     input_date.send_keys('12/20/2022')
-#     btnCalc.click()
-    
-# else:
-#     print("정상 진행")
